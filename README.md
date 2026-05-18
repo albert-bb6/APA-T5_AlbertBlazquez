@@ -246,37 +246,7 @@ def estereo2mono(ficEste, ficMono, canal=2):
         cabecera_out = _crear_cabecera(1, meta['sample_rate'], 16, num_muestras)
         f_out.write(cabecera_out)
         f_out.write(struct.pack(f'<{num_muestras}h', *mono_muestras))
-Código de mono2estereo()
-Python
-def mono2estereo(ficIzq, ficDer, ficEste):
-    """
-    Lee dos ficheros monofónicos (ficIzq y ficDer) de 16 bits y genera
-    un archivo estéreo (ficEste) entrelazando sus canales.
-    """
-    with open(ficIzq, 'rb') as f_izq, open(ficDer, 'rb') as f_der, open(ficEste, 'wb') as f_out:
-        meta_izq = _leer_cabecera(f_izq)
-        meta_der = _leer_cabecera(f_der)
-        
-        if meta_izq['num_channels'] != 1 or meta_der['num_channels'] != 1:
-            raise ValueError("Los archivos de entrada deben ser monofónicos.")
-        if meta_izq['sample_rate'] != meta_der['sample_rate']:
-            raise ValueError("Los archivos deben tener la misma frecuencia de muestreo.")
-        if meta_izq['bits_per_sample'] != 16 or meta_der['bits_per_sample'] != 16:
-            raise ValueError("Solo se soportan archivos de 16 bits.")
-            
-        num_muestras = min(meta_izq['data_size'], meta_der['data_size']) // 2
-        
-        left_raw = f_izq.read(num_muestras * 2)
-        right_raw = f_der.read(num_muestras * 2)
-        
-        left = struct.unpack(f'<{num_muestras}h', left_raw)
-        right = struct.unpack(f'<{num_muestras}h', right_raw)
-        
-        estereo_muestras = [val for par in zip(left, right) for val in par]
-        
-        cabecera_out = _crear_cabecera(2, meta_izq['sample_rate'], 16, num_muestras)
-        f_out.write(cabecera_out)
-        f_out.write(struct.pack(f'<{num_muestras * 2}h', *estereo_muestras))
+
 ##### Código de `mono2estereo()`
 def mono2estereo(ficIzq, ficDer, ficEste):
     """
